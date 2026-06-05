@@ -2,23 +2,23 @@ import pandas as pd
 
 
 def compare_csv_structure(file1: str, file2: str):
-    df1 = pd.read_csv(file1)
-    df2 = pd.read_csv(file2)
+    cols1 = list(pd.read_csv(file1, nrows=0).columns)
+    cols2 = list(pd.read_csv(file2, nrows=0).columns)
 
-    if set(df1.columns) == set(df2.columns):
+    if cols1 == cols2:
         print("✅ Success: The CSV file structure is exactly the same.")
-    else:
-        print("⚠️  Warning: Structural divergences were found!\n")
+        return
 
-        missing_columns = set(df1.columns) - set(df2.columns)
-        additional_columns = set(df2.columns) - set(df1.columns)
+    print("⚠️ Warning: Structural divergences were found!")
 
-        if missing_columns:
-            print(f"❌ Columns missing in the new file: {missing_columns}")
+    missing_columns = set(cols1) - set(cols2)
+    additional_columns = set(cols2) - set(cols1)
 
-        if additional_columns:
-            print(f"➕ New columns that were added: {additional_columns}")
+    if missing_columns:
+        print(f"❌ Missing columns: {missing_columns}")
 
+    if additional_columns:
+        print(f"➕ Additional columns: {additional_columns}")
 
-if __name__ == "__main__":
-    compare_csv_structure("data/dados_modelo.csv", "data/dados_recebidos.csv")
+    if not missing_columns and not additional_columns:
+        print("🔄 Same columns, different order.")
